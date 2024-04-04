@@ -39,6 +39,7 @@ Route::group(['middleware' => ['read.accessibility']], function () {
 
 Route::get('about/me', [PermissionController::class, 'me'])->middleware('auth:sanctum');
 
+
 //mutator APIs
 Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::post('model/store', [DigModelStoreController::class, 'store']);
