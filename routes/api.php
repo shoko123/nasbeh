@@ -37,6 +37,7 @@ Route::group(['middleware' => ['read.accessibility']], function () {
     Route::post('media/carousel', [MediaController::class, 'carousel']);
 });
 
+
 Route::get('about/me', [PermissionController::class, 'me'])->middleware('auth:sanctum');
 
 //mutator APIs
