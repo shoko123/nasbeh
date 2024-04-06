@@ -25,10 +25,10 @@ use Illuminate\Support\Facades\Route;
 //open routes
 Route::post('test/status', [TestController::class, 'status']);
 Route::post('test/run', [TestController::class, 'run']);
+Route::get('app/init', [AppController::class, 'init']);
 
 //read only APIs. Accessible when config.accessibility.authenticatedUsersOnly is false, or authenticated.
 Route::group(['middleware' => ['read.accessibility']], function () {
-    Route::get('app/init', [AppController::class, 'init']);
     Route::post('model/init', [DigModelInitController::class, 'init']);
     Route::post('model/index', [DigModelReadController::class, 'index']);
     Route::post('model/page', [DigModelReadController::class, 'page']);
@@ -36,7 +36,6 @@ Route::group(['middleware' => ['read.accessibility']], function () {
     Route::post('model/carousel', [DigModelReadController::class, 'carousel']);
     Route::post('media/carousel', [MediaController::class, 'carousel']);
 });
-
 
 Route::get('about/me', [PermissionController::class, 'me'])->middleware('auth:sanctum');
 

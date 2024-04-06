@@ -32,12 +32,12 @@ return new class extends Migration
             $table->string('id', 15)->primary();
             $table->string('square', 50)->nullable();
             $table->string('context', 50)->nullable();
+            $table->string('excavation_date', 30)->nullable();
             $table->string('occupation_level', 10)->nullable();
-            $table->string('base_typology', 50)->nullable();
-            $table->string('material', 50)->nullable();
-            $table->string('completeness', 50)->nullable();
-            $table->string('description', 350)->nullable();
-            $table->string('conservation_condition', 250)->nullable();
+            $table->string('cataloger_material', 50)->nullable();
+            $table->unsignedTinyInteger('whole')->default(1);
+            $table->string('cataloger_typology', 50)->nullable();
+            $table->string('cataloger_description', 350)->nullable();
             $table->string('conservation_notes', 250)->nullable();
             $table->string('weight', 50)->nullable();
             $table->string('length', 50)->nullable();
@@ -46,17 +46,17 @@ return new class extends Migration
             $table->string('diameter', 50)->nullable();
             $table->string('dimension_notes', 250)->nullable();
             $table->string('cultural_period', 50)->nullable();
-            $table->string('excavation_date', 30)->nullable();
-            $table->string('catalog_date', 50)->nullable();
-            $table->string('catalogued_by', 50)->nullable();
-            $table->string('decoration', 50)->nullable();
             $table->string('excavation_object_id', 50)->nullable();
             $table->string('old_museum_id', 50)->nullable();
-            $table->string('uri', 100)->nullable();
+            $table->unsignedTinyInteger('cataloger_id')->default(1);
+            $table->string('catalog_date', 50)->nullable();
+            $table->string('specialist_description', 250)->nullable();
+            $table->string('specialist_date', 30)->nullable();
             $table->string('thumbnail', 150)->nullable();
+            $table->string('uri', 100)->nullable();
             $table->unsignedTinyInteger('base_type_id')->default(1);
             $table->unsignedTinyInteger('material_id')->default(1);
-            $table->unsignedTinyInteger('cataloger_id')->default(1);
+
 
             $table->foreign('base_type_id')
                 ->references('id')->on('stone_base_types')
