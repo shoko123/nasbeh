@@ -32,7 +32,7 @@ return new class extends Migration
             $table->string('id', 15)->primary();
             $table->string('square', 50)->nullable();
             $table->string('context', 50)->nullable();
-            $table->string('excavation_date', 30)->nullable();
+            $table->date('excavation_date')->nullable();
             $table->string('occupation_level', 10)->nullable();
             $table->string('cataloger_material', 50)->nullable();
             $table->unsignedTinyInteger('whole')->default(1);
@@ -49,9 +49,9 @@ return new class extends Migration
             $table->string('excavation_object_id', 50)->nullable();
             $table->string('old_museum_id', 50)->nullable();
             $table->unsignedTinyInteger('cataloger_id')->default(1);
-            $table->string('catalog_date', 50)->nullable();
+            $table->date('catalog_date')->nullable();
             $table->string('specialist_description', 250)->nullable();
-            $table->string('specialist_date', 30)->nullable();
+            $table->date('specialist_date')->nullable();
             $table->string('thumbnail', 150)->nullable();
             $table->string('uri', 100)->nullable();
             $table->unsignedTinyInteger('base_type_id')->default(1);

@@ -6,16 +6,22 @@ use App\Models\Groups\ModelGroup;
 use App\Models\Interfaces\ModelGroupInterface;
 
 //require_once 'App\Models\Groups\global_tag_groups.php';
-require_once app_path().'/Models/Groups/global_tag_groups.php';
+require_once app_path() . '/Models/Groups/global_tag_groups.php';
 
 class StoneGroup extends ModelGroup implements ModelGroupInterface
 {
     private static $model_groups = [
+
         'Material' => [
             'group_type_code' => 'CL',
             'dependency' => null,
             'table_name' => 'stone_materials',
             'column_name' => 'material_id',
+        ],
+        'Whole' => [
+            'group_type_code' => 'CB',
+            'column_name' => 'whole',
+            'params' => ['Yes', 'No'],
         ],
         'Basic Typology' => [
             'group_type_code' => 'CL',
@@ -127,6 +133,7 @@ class StoneGroup extends ModelGroup implements ModelGroupInterface
             'Registration' => [
                 'Media',
                 'Cataloger',
+                'Whole'
             ],
             'Periods' => [
                 'Periods (Top-Level)',

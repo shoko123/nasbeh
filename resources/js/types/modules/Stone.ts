@@ -5,11 +5,12 @@ type TStone<T extends TModuleInfo> = {
     id: string
     square: string
     context: string
+    excavation_date: Date
     occupation_level: string
-    base_typology: string
-    material: string
-    completeness: string
-    description: string
+    cataloger_material: number
+    whole: boolean
+    cataloger_typology: string
+    cataloger_description: string
     conservation_notes: string
     weight: string
     length: string
@@ -18,13 +19,16 @@ type TStone<T extends TModuleInfo> = {
     diameter: string
     dimension_notes: string
     cultural_period: string
-    excavation_date: string
-    catalog_date: string
-    catalogued_by: string
-    decoration: string
     excavation_object_id: string
     old_museum_id: string
+    cataloger_id: number
+    catalog_date: Date
+    specialist_description: string
+    specialist_date: Date
+    thumbnail: string
     uri: string
+    base_type_id: number
+    material_id: number
   }
   modify: Pick<TStone<T>['fields'], 'id' | 'square' | 'context'>
   lookup: Pick<TStone<T>['fields'], 'id'>

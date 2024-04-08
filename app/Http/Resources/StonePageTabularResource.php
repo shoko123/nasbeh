@@ -13,7 +13,8 @@ class StonePageTabularResource extends JsonResource
             'id' => $this->id,
             'square' => $this->square,
             'context' => $this->context,
-            'description' => $this->description,
+            'excavation_date' => $this->excavation_date,
+            'cataloger_description' => $this->cataloger_description,
             'conservation_notes' => $this->conservation_notes,
         ];
     }

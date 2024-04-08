@@ -4,6 +4,7 @@ import { defineStore, storeToRefs } from 'pinia'
 import type { TFieldsUnion, TModule } from '@/js/types/moduleTypes'
 import type { TApiItemShow } from '@/js/types/itemTypes'
 import type { TApiArray } from '@/js/types/collectionTypes'
+import type { IStringObject } from '@/js/types/generalTypes'
 import { useCollectionsStore } from './collections/collections'
 import { useCollectionMainStore } from './collections/collectionMain'
 import { useRoutesMainStore } from './routes/routesMain'
@@ -25,6 +26,7 @@ export const useItemStore = defineStore('item', () => {
   const tag = ref<string | undefined>(undefined)
   const short = ref<string | undefined>(undefined)
   const selectedItemParams = ref<string[]>([])
+  const discreteColumns = ref<IStringObject>({})
   const ready = ref<boolean>(false)
   const itemViews = ref<string[]>([])
   const itemViewIndex = ref<number>(0)
@@ -75,8 +77,10 @@ export const useItemStore = defineStore('item', () => {
         console.log(`******serious error while saving item****`)
         return
       } else {
-        if (['CV', 'CL'].includes(group.code)) {
+        if (['CV', 'CL', 'CB'].includes(group.code)) {
+          //TODO maybe exclude 'CB' groups? show default if true?
           selectedItemParams.value.push(paramKey)
+          discreteColumns.value[x] = trio.value.paramsObj[paramKey].text
         }
       }
     }
@@ -133,6 +137,7 @@ export const useItemStore = defineStore('item', () => {
   function itemClear() {
     itemIndex.value = -1
     fields.value = undefined
+    discreteColumns.value = {}
     slug.value = undefined
     short.value = undefined
     tag.value = undefined
@@ -188,6 +193,7 @@ export const useItemStore = defineStore('item', () => {
     fields,
     id,
     derived,
+    discreteColumns,
     selectedItemParams,
     itemIndex,
     nextSlug,

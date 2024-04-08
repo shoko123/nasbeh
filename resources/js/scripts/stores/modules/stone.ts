@@ -41,7 +41,8 @@ export const useStoneStore = defineStore('stone', () => {
       { title: 'Label', align: 'start', key: 'tag' },
       { title: 'Square', align: 'start', key: 'square' },
       { title: 'Context', align: 'start', key: 'context' },
-      { title: 'Description', align: 'start', key: 'description' },
+      { title: 'Excavation Date', align: 'start', key: 'excavation_date' },
+      { title: 'Cataloger Description', align: 'start', key: 'cataloger_description' },
       { title: 'Conservation Notes', align: 'start', key: 'conservation_notes' },
     ]
   })

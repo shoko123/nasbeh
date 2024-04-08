@@ -46,7 +46,7 @@ class Stone extends DigModel
 
     public function getShortAttribute()
     {
-        return is_null($this->description) ? 'TBD' : $this->description;
+        return is_null($this->cataloger_description) ? 'TBD' : $this->cataloger_description;
     }
 
     public function initInfo(): array
@@ -80,7 +80,7 @@ class Stone extends DigModel
     public function builderPageGalleryLoad(): void
     {
         //load fields required by 'short' attribute
-        $this->builder = $this->select('id', 'description')
+        $this->builder = $this->select('id', 'cataloger_description')
             ->with(['media' => function ($query) {
                 $query->select('*')->orderBy('order_column');
             }]);
@@ -104,7 +104,7 @@ class Stone extends DigModel
 
     public function builderCarouselLoad(): void
     {
-        $this->builder = $this->select('id', 'description')->with(['media' => function ($query) {
+        $this->builder = $this->select('id', 'cataloger_description')->with(['media' => function ($query) {
             $query->orderBy('order_column');
         }]);
     }
