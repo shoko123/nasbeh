@@ -1,8 +1,20 @@
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { TFieldsByModule, TFieldsUnion, FuncSlugToId } from '@/js/types/moduleTypes'
 
 export const useLocusStore = defineStore('locus', () => {
+  const newFields = ref<TFieldsByModule<'Locus'>>({
+    id: '',
+    category: '',
+    a: 0,
+    b: 0,
+    oc_label: '',
+    square: '',
+    uri: '',
+    context_uri: '',
+    published_date: '',
+    updated_date: '',
+  })
   const slugToId: FuncSlugToId = function (slug: string) {
     const arr = slug.split('.')
 
@@ -24,15 +36,12 @@ export const useLocusStore = defineStore('locus', () => {
     return { tag: id, slug: id }
   }
 
-  function beforeStore(isCreate: boolean, fields: TFieldsUnion): TFieldsUnion | false {
+  function beforeStore(isCreate: boolean): TFieldsUnion | false {
     //console.log(`stone.beforStore() isCreate: ${isCreate}  fields: ${JSON.stringify(fields, null, 2)}`)
-    const sf = <TFieldsByModule<'Stone'>>fields
     if (isCreate) {
-      const rf = { ...sf }
-      //do something here
-      return rf
+      return newFields.value
     } else {
-      return sf
+      return newFields.value
     }
   }
 
@@ -50,6 +59,7 @@ export const useLocusStore = defineStore('locus', () => {
   })
 
   return {
+    newFields,
     beforeStore,
     slugToId,
     tagAndSlugFromId,

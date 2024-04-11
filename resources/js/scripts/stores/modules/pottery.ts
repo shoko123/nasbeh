@@ -1,8 +1,13 @@
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { TFieldsByModule, TFieldsUnion, FuncSlugToId } from '@/js/types/moduleTypes'
 
 export const usePotteryStore = defineStore('pottery', () => {
+  const newFields = ref<TFieldsByModule<'Pottery'>>({
+    id: '',
+    name: '',
+    area: '',
+  })
   const slugToId: FuncSlugToId = function (slug: string) {
     const arr = slug.split('.')
 
@@ -19,15 +24,12 @@ export const usePotteryStore = defineStore('pottery', () => {
     return { tag: id, slug: id }
   }
 
-  function beforeStore(isCreate: boolean, fields: TFieldsUnion): TFieldsUnion | false {
-    //console.log(`Pottery.beforStore() isCreate: ${isCreate}  fields: ${JSON.stringify(fields, null, 2)}`)
-    const lf = <TFieldsByModule<'Pottery'>>fields
+  function beforeStore(isCreate: boolean): TFieldsUnion | false {
+    //console.log(`stone.beforStore() isCreate: ${isCreate}  fields: ${JSON.stringify(fields, null, 2)}`)
     if (isCreate) {
-      const rf = { ...lf }
-
-      return rf
+      return newFields.value
     } else {
-      return lf
+      return newFields.value
     }
   }
 
@@ -45,6 +47,7 @@ export const usePotteryStore = defineStore('pottery', () => {
   })
 
   return {
+    newFields,
     beforeStore,
     tagAndSlugFromId,
     slugToId,

@@ -63,6 +63,6 @@ const specialist = computed(() => {
 
 function openContextTab() {
   console.log(`goToOpenContext`)
-  window.open(item.value.uri, '_blank', 'noreferrer')
+  window.open(<string>item.value.uri, '_blank', 'noreferrer')
 }
 </script>

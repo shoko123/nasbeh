@@ -9,20 +9,9 @@ class StoneStoreRequest extends DigModelStoreRequest
     private $rules = [];
 
     public static $base_rules = [
-        'item.area' => 'in:A,A1,A2,A3,A4,A5,A6,A7,M,M1,M2,M68,XX',
-        'item.pottery' => 'max:50',
-        'item.basket' => 'required|max:50',
-        'item.stone_no' => 'required|numeric|min:0|max:99',
-        'item.date' => 'string|max:10|nullable',
-        'item.year' => 'numeric|min:1950|max:2025|nullable',
-        'item.prov_notes' => 'max:200',
-        'item.type' => 'max:500',
-        'item.material_code' => 'max:20',
-        'item.dimensions' => 'max:250',
-        'item.rim_diameter' => 'min:1|max:500|nullable',
-        'item.description' => 'max:500',
-        'item.notes' => 'max:250',
-        'item.publication' => 'max:250',
+        'item.id' => 'required|max:50',
+        'item.specialist_description' => 'max:250',
+        'item.specialist_date' => 'required'
     ];
 
     public static $create_rules = [

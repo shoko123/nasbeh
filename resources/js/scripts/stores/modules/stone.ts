@@ -1,8 +1,38 @@
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { TFieldsByModule, TFieldsUnion, FuncSlugToId } from '@/js/types/moduleTypes'
 
 export const useStoneStore = defineStore('stone', () => {
+  const newFields = ref<TFieldsByModule<'Stone'>>({
+    id: '',
+    square: '',
+    context: '',
+    excavation_date: new Date(),
+    occupation_level: '',
+    excavation_object_id: '',
+    whole: false,
+    cataloger_material: '',
+    cataloger_typology: '',
+    cataloger_description: '',
+    conservation_notes: '',
+    weight: '',
+    length: '',
+    width: '',
+    height: '',
+    diameter: '',
+    dimension_notes: '',
+    cultural_period: '',
+    old_museum_id: '',
+    cataloger_id: 1,
+    catalog_date: new Date(),
+    specialist_description: '',
+    specialist_date: new Date(),
+    thumbnail: '',
+    uri: null,
+    base_type_id: 1,
+    material_id: 1,
+  })
+
   const slugToId: FuncSlugToId = function (slug: string) {
     const arr = slug.split('.')
 
@@ -24,15 +54,20 @@ export const useStoneStore = defineStore('stone', () => {
     return { tag: id, slug: id }
   }
 
-  function beforeStore(isCreate: boolean, fields: TFieldsUnion): TFieldsUnion | false {
+  function beforeStore(isCreate: boolean): TFieldsUnion | false {
     //console.log(`stone.beforStore() isCreate: ${isCreate}  fields: ${JSON.stringify(fields, null, 2)}`)
-    const sf = <TFieldsByModule<'Stone'>>fields
+    //const sf = <TFieldsByModule<'Stone'>>fields
     if (isCreate) {
-      const rf = { ...sf }
       //do something here
-      return rf
+      //const pDate = new Date()
+
+      //'2023-12-23' //new Date('2023-12-23') //pDate.toISOString().slice(0, 10)
+      return newFields.value
     } else {
-      return sf
+      const today = new Date('2022-12-22').toISOString().substring(0, 10)
+      console.log(`today: ${today}`)
+      newFields.value.specialist_date = today //today.toISOString().slice(0, 10)
+      return newFields.value
     }
   }
 
@@ -48,6 +83,7 @@ export const useStoneStore = defineStore('stone', () => {
   })
 
   return {
+    newFields,
     beforeStore,
     slugToId,
     tagAndSlugFromId,

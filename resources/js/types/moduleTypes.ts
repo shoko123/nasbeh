@@ -34,6 +34,8 @@ type TLookupUnion = ModuleUnionB['lookup']
 type TApiPageMainTabularUnion = ModuleUnionB['tabular'] & { slug: string }
 
 type TFieldsByModule<ModuleName extends TModule> = TAllByName<ModuleName>['fields']
+type TModifyByModule<ModuleName extends TModule> = TAllByName<ModuleName>['modify']
+
 type TTabularByModule<ModuleName extends TModule> = TAllByName<ModuleName>['tabular']
 type TApiTabularByModule<ModuleName extends TModule> = TAddTagAndSlug<TTabularByModule<ModuleName>>
 
@@ -62,6 +64,7 @@ export {
   TLookupUnion,
   TApiPageMainTabularUnion,
   TFieldsByModule,
+  TModifyByModule,
   TApiTabularByModule,
   TTabularByModule,
   TApiModuleInit,

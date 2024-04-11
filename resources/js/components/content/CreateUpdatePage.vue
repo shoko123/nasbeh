@@ -6,8 +6,8 @@
       </v-card-title>
       <v-card-text>
         <component :is="formNew" :is-create="props.isCreate">
-          <template #data="{ v, data }">
-            <v-btn variant="outlined" @click="submit(v, data)"> Submit </v-btn>
+          <template #newItem="{ v }">
+            <v-btn variant="outlined" @click="submit(v)"> Submit </v-btn>
             <v-btn variant="outlined" class="ml-1" @click="cancel"> Cancel </v-btn>
           </template>
         </component>
@@ -23,13 +23,10 @@ import { type Validation } from '@vuelidate/core'
 
 import { useRoutesMainStore } from '../../scripts/stores/routes/routesMain'
 import { useItemStore } from '../../scripts/stores/item'
-import { TFieldsUnion } from '@/js/types/moduleTypes'
+import { useModuleStore } from '../../scripts/stores/module'
 import { useNotificationsStore } from '../../scripts/stores/notifications'
-import { usePotteryStore } from '../../scripts/stores/modules/pottery'
-import { useStoneStore } from '../../scripts/stores/modules/stone'
 
 import StoneNew from '../modules/stones/StoneNew.vue'
-
 import PotteryNew from '../modules/pottery/PotteryNew.vue'
 
 const props = defineProps<{
@@ -38,6 +35,7 @@ const props = defineProps<{
 
 let { showSpinner, showSnackbar } = useNotificationsStore()
 let { upload } = useItemStore()
+let { getCurrentModuleStore } = storeToRefs(useModuleStore())
 let { routerPush } = useRoutesMainStore()
 let { current } = storeToRefs(useRoutesMainStore())
 
@@ -52,29 +50,17 @@ const formNew = computed<Component>(() => {
     case 'Stone':
       return StoneNew
     default:
-      console.log(`Update.vue invalid module`)
+      console.log(`Update.vue invalid module ${current.value.module}`)
       return PotteryNew
   }
 })
 
-function beforeStore(isCreate: boolean, fields: TFieldsUnion) {
-  let store
-  switch (current.value.module) {
-    case 'Pottery':
-      store = usePotteryStore()
-      break
-    case 'Stone':
-      store = useStoneStore()
-      break
-
-    default:
-      console.log(`Update.vue invalid module`)
-      return false
-  }
-  return store.beforeStore(props.isCreate, fields)
+function beforeStore() {
+  let store = getCurrentModuleStore.value
+  return store.beforeStore(props.isCreate)
 }
 
-async function submit(v: Validation, data: TFieldsUnion) {
+async function submit(v: Validation) {
   //console.log(`CreateUpdate.submit() data: ${JSON.stringify(data, null, 2)}`)
 
   // vuelidate validation
@@ -87,8 +73,9 @@ async function submit(v: Validation, data: TFieldsUnion) {
     return
   }
 
+  // let newReq = child.value!.beforeStore()
   //alert("Form Successfully Submitted!")
-  let fieldsToSend = beforeStore(props.isCreate, data)
+  let fieldsToSend = beforeStore()
 
   if (fieldsToSend === false) {
     alert(`problem with data`)

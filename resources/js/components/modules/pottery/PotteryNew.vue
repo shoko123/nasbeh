@@ -1,41 +1,24 @@
 <template>
   <v-container fluid class="pa-1 ma-0">
     <v-row wrap no-gutters>
-      <v-text-field
-        v-model="data.id"
-        label="Name"
-        :error-messages="nameErrors"
-        class="mr-1"
-        filled
-      />
-      <v-select v-model="data.area" label="Area" :items="areas" />
-      <v-text-field
-        v-model="data.id"
-        label="Square"
-        :error-messages="squareErrors"
-        class="mr-1"
-        filled
-      />
-      <v-text-field
-        v-model="data.id"
-        label="stratum"
-        :error-messages="stratumErrors"
-        class="mr-1"
-        filled
-      />
+      <v-text-field v-model="newFields.id" label="Name" :error-messages="nameErrors" class="mr-1" filled />
+      <v-select v-model="newFields.area" label="Area" :items="areas" />
+      <v-text-field v-model="newFields.id" label="Square" :error-messages="squareErrors" class="mr-1" filled />
+      <v-text-field v-model="newFields.id" label="stratum" :error-messages="stratumErrors" class="mr-1" filled />
     </v-row>
-
-    <slot :id="data.id" name="data" :v="v" :data="data" />
+    <v-row v-if="currentItemFields"></v-row>
+    <slot :id="newFields.id" name="newFields" :v="v" :new-fields="newFields" />
   </v-container>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, reactive, computed } from 'vue'
+import { onMounted, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import type { TFieldsByModule } from '@/js/types/moduleTypes'
 import { useVuelidate } from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 import { useItemStore } from '../../../scripts/stores/item'
+import { usePotteryStore } from '../../../scripts/stores/modules/pottery'
 import { useTrioStore } from '../../../scripts/stores/trio/trio'
 
 const props = defineProps<{
@@ -44,28 +27,14 @@ const props = defineProps<{
 
 onMounted(() => {
   if (!props.isCreate) {
-    Object.assign(data, fields.value)
+    Object.assign(newFields, fields.value)
   }
-  console.log(`PotteryNew isCreate: ${props.isCreate}\n data: ${JSON.stringify(data, null, 2)}`)
+  console.log(`PotteryNew isCreate: ${props.isCreate}\n newFields: ${JSON.stringify(newFields, null, 2)}`)
 })
 
 const { fields } = storeToRefs(useItemStore())
+const { newFields } = storeToRefs(usePotteryStore())
 const { trio, groupLabelToKey } = storeToRefs(useTrioStore())
-
-let data: TFieldsByModule<'Pottery'> = reactive({
-  id: '',
-  name: '',
-  area: 'XX',
-  addendum: null,
-  year: null,
-  square: '',
-  stratum: '',
-  type: '',
-  cross_ref: '',
-  description: '',
-  notes: '',
-  elevation: '',
-})
 
 const areas = computed(() => {
   let paramKeys = trio.value.groupsObj[groupLabelToKey.value['Area']].paramKeys
@@ -80,7 +49,11 @@ const rules = computed(() => {
   }
 })
 
-const v = useVuelidate(rules, data)
+const currentItemFields = computed(() => {
+  return fields.value! as TFieldsByModule<'Pottery'>
+})
+
+const v = useVuelidate(rules, newFields)
 
 const nameErrors = computed(() => {
   return <string>(v.value.name.$error ? v.value.name.$errors[0].$message : undefined)
