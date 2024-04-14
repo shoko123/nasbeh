@@ -16,7 +16,7 @@ class Stone extends DigModel
 
     public function __construct()
     {
-        DigModel::__construct('Stone');
+        DigModel::__construct('Stone', ['excavation_date', 'catalog_date', 'specialist_date']);
     }
 
     public function model_tags()

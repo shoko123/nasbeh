@@ -18,7 +18,7 @@ class Pottery extends DigModel
 
     public function __construct()
     {
-        DigModel::__construct('Pottery');
+        DigModel::__construct('Pottery', []);
     }
 
     public function model_tags()
@@ -47,8 +47,8 @@ class Pottery extends DigModel
 
     public function getShortAttribute()
     {
-        $short = is_null($this->type) ? '' : 'Type: '.$this->type.'. ';
-        $short .= empty($this->cross_ref) ? '' : 'Ref: '.$this->cross_ref;
+        $short = is_null($this->type) ? '' : 'Type: ' . $this->type . '. ';
+        $short .= empty($this->cross_ref) ? '' : 'Ref: ' . $this->cross_ref;
 
         return $short;
     }

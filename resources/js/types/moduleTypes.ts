@@ -12,6 +12,9 @@ type TModuleInfo = {
   tabular: { id: string }
 }
 
+type SwapDatesWithStrings<T> = {
+  [k in keyof T]: T[k] extends Date ? string : T[k]
+}
 type TAllModules<T extends TModuleInfo = TModuleInfo> = {
   Stone: TStone<T>
   Locus: TLocus<T>
@@ -29,11 +32,15 @@ type TAllByName<TModuleName extends TModule> = TAllModules[TModuleName]
 
 type TUrlModule = ModuleUnionB['url_name']
 type TFieldsUnion = ModuleUnionB['fields']
+type TApiFieldsUnion = SwapDatesWithStrings<TFieldsUnion>
 type TModifyUnion = ModuleUnionB['modify']
 type TLookupUnion = ModuleUnionB['lookup']
 type TApiPageMainTabularUnion = ModuleUnionB['tabular'] & { slug: string }
 
 type TFieldsByModule<ModuleName extends TModule> = TAllByName<ModuleName>['fields']
+type TApiFieldsByModule<ModuleName extends TModule> = SwapDatesWithStrings<
+  TFieldsByModule<ModuleName>
+>
 type TModifyByModule<ModuleName extends TModule> = TAllByName<ModuleName>['modify']
 
 type TTabularByModule<ModuleName extends TModule> = TAllByName<ModuleName>['tabular']
@@ -51,6 +58,7 @@ type TApiModuleInit = {
     main_collection_views: TCollectionView[]
     related_collection_views: TCollectionView[]
   }
+  date_columns: string[]
   lookups: { column_name: string; group_name: string }[]
   trio: TApiTrio
   welcome_text: string
@@ -60,10 +68,12 @@ export {
   TModule,
   TUrlModule,
   TFieldsUnion,
+  TApiFieldsUnion,
   TModifyUnion,
   TLookupUnion,
   TApiPageMainTabularUnion,
   TFieldsByModule,
+  TApiFieldsByModule,
   TModifyByModule,
   TApiTabularByModule,
   TTabularByModule,

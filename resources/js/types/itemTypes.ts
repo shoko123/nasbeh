@@ -1,9 +1,9 @@
 //showTypes.ts
 //types returned from 'show' api route
 import { TApiArray } from '@/js/types/collectionTypes'
-import { TFieldsUnion } from '@/js/types/moduleTypes'
+import { TApiFieldsUnion } from '@/js/types/moduleTypes'
 
-type TApiItemShow<F extends TFieldsUnion> = {
+type TApiItemShow<F extends TApiFieldsUnion> = {
   fields: F
   model_tags: { group_label: string; tag_text: string }[]
   global_tags: { group_label: string; tag_text: string }[]
@@ -14,7 +14,7 @@ type TApiItemShow<F extends TFieldsUnion> = {
 }
 
 type TApiItemUpdate = {
-  fields: TFieldsUnion
+  fields: TApiFieldsUnion
   slug: string
 }
 

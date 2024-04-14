@@ -1,7 +1,7 @@
 // stores/media.js
 import { ref, computed } from 'vue'
 import { defineStore, storeToRefs } from 'pinia'
-import type { TFieldsUnion, TModule } from '@/js/types/moduleTypes'
+import type { TApiFieldsUnion, TFieldsUnion, TModule } from '@/js/types/moduleTypes'
 import type { TApiItemShow } from '@/js/types/itemTypes'
 import type { TApiArray } from '@/js/types/collectionTypes'
 import type { IStringObject } from '@/js/types/generalTypes'
@@ -27,6 +27,7 @@ export const useItemStore = defineStore('item', () => {
   const short = ref<string | undefined>(undefined)
   const selectedItemParams = ref<string[]>([])
   const discreteColumns = ref<IStringObject>({})
+  const dateColumns = ref<string[]>([])
   const ready = ref<boolean>(false)
   const itemViews = ref<string[]>([])
   const itemViewIndex = ref<number>(0)
@@ -44,6 +45,10 @@ export const useItemStore = defineStore('item', () => {
     itemViewIndex.value = index
   }
 
+  function saveDateColumns(date_columns: string[]) {
+    dateColumns.value = date_columns
+  }
+
   const derived = computed(() => {
     return {
       module: current.value.module,
@@ -56,8 +61,9 @@ export const useItemStore = defineStore('item', () => {
 
   type KeyOfFields = keyof TFieldsUnion
 
-  function saveitemFieldsPlus<F extends TFieldsUnion>(apiItem: TApiItemShow<F>) {
-    fields.value = <TFieldsUnion>apiItem.fields
+  function saveitemFieldsPlus<F extends TApiFieldsUnion>(apiItem: TApiItemShow<F>) {
+    saveItemFields(apiItem.fields)
+
     const res = tagAndSlugFromId(<TModule>current.value.module, apiItem.fields.id)
     tag.value = res.tag
     slug.value = res.slug
@@ -101,6 +107,20 @@ export const useItemStore = defineStore('item', () => {
     }
   }
 
+  function saveItemFields<F extends TApiFieldsUnion>(apiFields: F) {
+    const tmpMap = new Map()
+    Object.entries(apiFields).forEach(([key, value]) => {
+      console.log(`Item[${key}] => ${value}`)
+      //const typedKey = key as KeyOfFields
+      if (dateColumns.value.includes(key)) {
+        tmpMap.set(key, value === null ? null : new Date(<string>value)) //Obj[key] = value === null || value === '' ? null : new Date(<string>value)
+      } else {
+        tmpMap.set(key, value)
+      }
+    })
+    fields.value = Object.fromEntries(tmpMap.entries())
+  }
+
   //return the newly created/update item's slug (need it only for create())
   async function upload(
     isCreate: boolean,
@@ -111,11 +131,15 @@ export const useItemStore = defineStore('item', () => {
       `item.upload isCreate: ${isCreate}, module: ${current.value.module}, fields: ${JSON.stringify(newFields, null, 2)}`,
     )
 
-    const res = await send<TApiItemShow<TFieldsUnion>>('model/store', isCreate ? 'post' : 'put', {
-      model: current.value.module,
-      item: newFields,
-      id: newFields.id,
-    })
+    const res = await send<TApiItemShow<TApiFieldsUnion>>(
+      'model/store',
+      isCreate ? 'post' : 'put',
+      {
+        model: current.value.module,
+        item: newFields,
+        id: newFields.id,
+      },
+    )
     if (!res.success) {
       return res
     }
@@ -127,7 +151,7 @@ export const useItemStore = defineStore('item', () => {
       itemIndex.value = array.length
       //console.log(`item pushed to main array. index: ${itemIndex.value}`)
     } else {
-      fields.value = res.data.fields
+      saveItemFields(res.data.fields)
       slug.value = res.data.slug
     }
 
@@ -164,7 +188,7 @@ export const useItemStore = defineStore('item', () => {
     const { removeItemIdFromMainArray } = useCollectionMainStore()
     //const prev = next('main', itemIndexById((<TFieldsUnion>fields.value).id), false)
 
-    const res = await send<TApiItemShow<TFieldsUnion>>('model/destroy', 'post', {
+    const res = await send<TApiItemShow<TApiFieldsUnion>>('model/destroy', 'post', {
       model: current.value.module,
       slug: slug.value,
       id: fields.value?.id,
@@ -191,6 +215,7 @@ export const useItemStore = defineStore('item', () => {
     short,
     ready,
     fields,
+    dateColumns,
     id,
     derived,
     discreteColumns,
@@ -203,6 +228,7 @@ export const useItemStore = defineStore('item', () => {
     itemView,
     setItemViewIndex,
     saveitemFieldsPlus,
+    saveDateColumns,
     upload,
     itemRemove,
   }

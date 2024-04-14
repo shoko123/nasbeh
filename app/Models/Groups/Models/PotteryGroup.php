@@ -5,7 +5,8 @@ namespace App\Models\Groups\Models;
 use App\Models\Groups\ModelGroup;
 use App\Models\Interfaces\ModelGroupInterface;
 
-require_once app_path().'/Models/Groups/global_tag_groups.php';
+require_once app_path() . '/Models/Groups/global_tag_groups.php';
+
 
 class PotteryGroup extends ModelGroup implements ModelGroupInterface
 {

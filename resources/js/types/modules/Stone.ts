@@ -24,12 +24,13 @@ type TStone<T extends TModuleInfo> = {
     cataloger_id: number
     catalog_date: Date
     specialist_description: string
-    specialist_date: Date | string
+    specialist_date: Date
     thumbnail: string
-    uri: string | null
+    uri: string
     base_type_id: number
     material_id: number
   }
+
   modify: TStone<T>['fields']
   lookup: Pick<TStone<T>['fields'], 'id'>
   tabular: TStone<T>['fields']

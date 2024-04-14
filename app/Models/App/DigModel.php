@@ -28,18 +28,24 @@ abstract class DigModel extends Model implements DigModelInterface, HasMedia
 
     protected $builder;
 
+    protected $date_columns = [];
+
     use InteractsWithMedia;
 
-    public function __construct($eloquent_model_name)
+    public function __construct($eloquent_model_name, $date_columns)
     {
         $this->eloquent_model_name = $eloquent_model_name;
+        $this->date_columns = $date_columns;
     }
 
     public function eloquentName()
     {
         return $this->eloquent_model_name;
     }
-
+    public function dateColumns()
+    {
+        return $this->date_columns;
+    }
     public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('tn')
@@ -71,34 +77,34 @@ abstract class DigModel extends Model implements DigModelInterface, HasMedia
 
     public function builderIndexApplyFilters($query)
     {
-        if (! empty($query['model_tag_ids'])) {
+        if (!empty($query['model_tag_ids'])) {
             $this->applyModelTagFilters($query['model_tag_ids']);
         }
 
-        if (! empty($query['global_tag_ids'])) {
+        if (!empty($query['global_tag_ids'])) {
             $this->applyGlobalTagFilters($query['global_tag_ids']);
         }
 
-        if (! empty($query['column_lookup_ids'])) {
+        if (!empty($query['column_lookup_ids'])) {
             $this->applyColumnLookupOrValueFilters($query['column_lookup_ids']);
         }
 
-        if (! empty($query['column_values'])) {
+        if (!empty($query['column_values'])) {
             $this->applyColumnLookupOrValueFilters($query['column_values']);
         }
 
-        if (! empty($query['column_search'])) {
+        if (!empty($query['column_search'])) {
             $this->applyColumnSearchFilters($query['column_search']);
         }
 
-        if (! empty($query['media'])) {
+        if (!empty($query['media'])) {
             $this->applyMediaFilter($query['media']);
         }
     }
 
     public function applyModelTagFilters(array $tag_ids)
     {
-        $modelName = 'App\\Models\\Tags\\'.$this->eloquent_model_name.'Tag';
+        $modelName = 'App\\Models\\Tags\\' . $this->eloquent_model_name . 'Tag';
         $model = new $modelName;
         $groups = [];
         $tags = $model->select('id', 'group_id')->whereIn('id', $tag_ids)->get();
@@ -150,7 +156,7 @@ abstract class DigModel extends Model implements DigModelInterface, HasMedia
         foreach ($cols as $key => $col) {
             $this->builder->Where(function ($query) use ($col) {
                 foreach ($col['vals'] as $key1 => $term) {
-                    $query->orWhere($col['column_name'], 'LIKE', '%'.$term.'%');
+                    $query->orWhere($col['column_name'], 'LIKE', '%' . $term . '%');
                 }
             });
         }
@@ -189,7 +195,7 @@ abstract class DigModel extends Model implements DigModelInterface, HasMedia
         $this->builder = $this->builder->whereIn('id', $ids);
 
         //order by given (string) ids
-        $sortedIds = "'".implode("', '", $ids)."'";
+        $sortedIds = "'" . implode("', '", $ids) . "'";
 
         $res = $this->builder->orderByRaw("FIELD(id, {$sortedIds})")
             ->get();
@@ -202,7 +208,7 @@ abstract class DigModel extends Model implements DigModelInterface, HasMedia
                 $r = collect([]);
                 $r = $res->map(function ($item, $key) {
                     $media = null;
-                    if (! $item->media->isEmpty()) {
+                    if (!$item->media->isEmpty()) {
                         $media = ['full' => $item->media[0]->getPath(), 'tn' => $item->media[0]->getPath('tn')];
                     }
 
@@ -287,7 +293,7 @@ abstract class DigModel extends Model implements DigModelInterface, HasMedia
     public function store(array $new_item, bool $methodIsPost)
     {
         if ($methodIsPost) {
-            $modelName = "App\Models\DigModels\\".$this->eloquent_model_name;
+            $modelName = "App\Models\DigModels\\" . $this->eloquent_model_name;
             $item = new $modelName;
         } else {
             $item = self::findOrFail($new_item['id']);
@@ -305,7 +311,7 @@ abstract class DigModel extends Model implements DigModelInterface, HasMedia
         try {
             $item->save();
         } catch (Exception $error) {
-            throw new Exception('Error while saving item to DB: '.$error);
+            throw new Exception('Error while saving item to DB: ' . $error);
         }
 
         if ($methodIsPost) {

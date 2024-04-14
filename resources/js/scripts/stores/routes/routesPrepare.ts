@@ -9,7 +9,7 @@
 import { ref } from 'vue'
 import { defineStore, storeToRefs } from 'pinia'
 import type { TPlanAction } from '@/js/types/routesTypes'
-import type { TFieldsUnion, TApiModuleInit, TModule } from '@/js/types/moduleTypes'
+import type { TApiFieldsUnion, TApiModuleInit, TModule } from '@/js/types/moduleTypes'
 import type { TApiItemShow } from '@/js/types/itemTypes'
 import type { LocationQuery } from 'vue-router'
 import { useXhrStore } from '../xhr'
@@ -162,6 +162,7 @@ export const useRoutesPrepareStore = defineStore('routesPrepare', () => {
       })
       c.resetCollectionsViewIndex()
       i.setItemViewIndex(0)
+      i.saveDateColumns(res.data.date_columns)
       i.itemViews = res.data.display_options.item_views
       c.clear(['main', 'media', 'related'])
 
@@ -234,7 +235,7 @@ export const useRoutesPrepareStore = defineStore('routesPrepare', () => {
       return { success: false, message: sp.message }
     }
 
-    const res = await send<TApiItemShow<TFieldsUnion>>('model/show', 'post', {
+    const res = await send<TApiItemShow<TApiFieldsUnion>>('model/show', 'post', {
       model: module,
       id: sp.id,
     })

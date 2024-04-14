@@ -22,7 +22,7 @@ class Locus extends DigModel
 
     public function __construct()
     {
-        DigModel::__construct('Locus');
+        DigModel::__construct('Locus', []);
     }
 
     // public function model_tags()
