@@ -7,28 +7,29 @@
     </v-row>
     <v-row wrap no-gutters>
       <v-text-field v-model="item.id" label="Label Id" class="mr-1" filled readonly />
-      <v-text-field v-model="item.excavation_date" label="Excavation Date" class="mr-1" filled readonly />
-      <v-text-field v-model="item.catalog_date" label="Catalog Date" class="mr-1" filled readonly />
-      <v-text-field v-model="item.specialist_date" label="Specialist Day from fields" class="mr-1" filled readonly />
-      <!-- <date-picker v-model="item.excavation_date" label="Pick a Date" color="primary"
-        @update:model-value="updateModelValue"></date-picker> -->
+      <v-text-field v-model="excavation_date" label="Excavation Date" class="mr-1" filled readonly />
+      <v-text-field v-model="catalog_date" label="Catalog Date" class="mr-1" filled readonly />
+      <v-text-field :model-value="specialist_date" label="Specialist Day from fields" class="mr-1" filled readonly />
+    </v-row>
+    <v-row wrap no-gutters>
+      <datePicker v-model:startDate="item.excavation_date" title="Excavation Date"></datePicker>
+      <datePicker v-model:startDate="item.catalog_date" title="Catalog Date"></datePicker>
+      <datePicker v-model:startDate="item.specialist_date" title="Specialist Date"></datePicker>
     </v-row>
 
   </v-container>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { TFieldsByModule } from '@/js/types/moduleTypes'
 import { useItemStore } from '../../../scripts/stores/item'
 import DatePicker from './DatePicker.vue'
-
+import { dateStringFromDate } from '../../../scripts/utils/utils'
 
 onMounted(() => {
-
   //item.value.catalog_date = new Date(item.value.catalog_date)//Object.assign(newFields.value, fields.value as TFieldsByModule<'Stone'>)
-
   //console.log(`StoneNew.Mount fields: ${JSON.stringify(newFields, null, 2)}`)
 })
 
@@ -38,12 +39,17 @@ const item = computed(() => {
   return <TFieldsByModule<'Stone'>>fields.value
 })
 
-function updateModelValue(value: number): void {
-  startDate.value = new Date(value);
-}
+const excavation_date = computed(() => {
+  return dateStringFromDate(item.value.excavation_date)
+})
 
-const startDate = ref<Date>(new Date());
+const catalog_date = computed(() => {
+  return dateStringFromDate(item.value.catalog_date)
+})
 
+const specialist_date = computed(() => {
+  return dateStringFromDate(item.value.specialist_date)
+})
 
 
 </script>

@@ -1,55 +1,34 @@
 <template>
-    <v-menu v-model="isMenuOpen" :close-on-content-click="false">
+    <v-btn icon="mdi-cancel" variant="text" @click="resetDate"></v-btn>
+    <v-menu v-model="isMenuOpen" :close-on-content-click="false" class="ma-2">
         <template #activator="{ props }">
-            <v-text-field :label="label" :model-value="formattedDate" readonly v-bind="props" variant="solo"
-                hide-details></v-text-field>
+            <v-text-field :model-value="formattedDate" v-bind="props" :label="dpProps.title"> </v-text-field>
         </template>
-        <v-date-picker v-model="selectedDate" hide-actions title="" :color="color">
-            <template #header>{{ formattedDate }}</template>
+        <v-date-picker v-model="startDate" hide-actions color="primary" title="" @update:model-value="dateSelected()">
+            <template #header> {{ dpProps.title }} {{ formattedDate }}</template>
         </v-date-picker>
     </v-menu>
 </template>
 
 <script setup>
-import { ref, computed, watch, defineProps, defineEmits } from "vue";
+import { ref, computed, defineModel } from "vue";
+import { dateStringFromDate } from '../../../scripts/utils/utils'
 
-const { label, color, modelValue } = defineProps([
-    "label",
-    "color",
-    "modelValue",
-]);
+const startDate = defineModel("startDate", { type: Date })
+const dpProps = defineProps({ title: { type: String, required: true }, })
 
-const emit = defineEmits(["update:modelValue"]);
+function dateSelected() {
+    //console.log(`Date selected`)
+    isMenuOpen.value = false
+}
 
-const isMenuOpen = ref(false);
-const selectedDate = ref(modelValue);
+const isMenuOpen = ref(false)
 
 const formattedDate = computed(() => {
-    return selectedDate.value
-    // if (selectedDate.value === null) {
-    //     return ""
-    // } else if (typeof (selectedDate.value) === 'string') {
-    //     return selectedDate.value
-    // } else {
-    //     return selectedDate.value.toLocaleDateString("en")
-    // }
-
-});
-
-watch(modelValue, (newDate) => {
-    selectedDate.value = new Date(newDate)
-});
-
-watch(selectedDate, (newDate) => {
-    emit("update:modelValue", newDate);
-});
+    return dateStringFromDate(startDate.value)
+})
+function resetDate() {
+    startDate.value = null
+    // isMenuOpen.value = false
+}
 </script>
-<style>
-.v-overlay__content:has(> .v-date-picker) {
-    min-width: auto !important;
-}
-
-.v-picker-title {
-    padding: 0 !important;
-}
-</style>`

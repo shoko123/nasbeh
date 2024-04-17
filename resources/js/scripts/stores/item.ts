@@ -110,8 +110,7 @@ export const useItemStore = defineStore('item', () => {
   function saveItemFields<F extends TApiFieldsUnion>(apiFields: F) {
     const tmpMap = new Map()
     Object.entries(apiFields).forEach(([key, value]) => {
-      console.log(`Item[${key}] => ${value}`)
-      //const typedKey = key as KeyOfFields
+      //console.log(`Item[${key}] => ${value}`)
       if (dateColumns.value.includes(key)) {
         tmpMap.set(key, value === null ? null : new Date(<string>value)) //Obj[key] = value === null || value === '' ? null : new Date(<string>value)
       } else {
