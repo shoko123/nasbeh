@@ -1,39 +1,52 @@
 <template>
   <v-container v-if="item" fluid class="pa-1 ma-0">
-    <div>Checking out date pickers</div>
     <v-row wrap no-gutters>
-      <v-text-field v-model="item.id" label="Label Id" class="mr-1" filled readonly />
+      <v-col md="6" lg="3" class="d-flex flex-column">
+        <v-text-field v-model="item.id" label="Label" class="mr-1" filled readonly />
+      </v-col>
+      <v-col md="6" lg="9" class="d-flex flex-column">
+        <v-btn prepend-icon="mdi-map-marker" class="mb-3 text-none" color="blue-lighten-3" @click="openContextTab()">
+          {{ tag }}@opencontext.org
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row wrap no-gutters>
       <v-textarea v-model="item.cataloger_description" label="Cataloger Description" class="mr-1" filled readonly />
+      <v-textarea v-model="item.conservation_notes" label="Conservation Notes" class="mr-1" filled readonly />
     </v-row>
     <v-row wrap no-gutters>
-      <v-text-field v-model="item.id" label="Label Id" class="mr-1" filled readonly />
-      <v-text-field v-model="excavation_date" label="Excavation Date" class="mr-1" filled readonly />
-      <v-text-field v-model="catalog_date" label="Catalog Date" class="mr-1" filled readonly />
-      <v-text-field :model-value="specialist_date" label="Specialist Day from fields" class="mr-1" filled readonly />
-    </v-row>
-    <v-row wrap no-gutters>
-      <datePicker v-model:startDate="item.excavation_date" title="Excavation Date"></datePicker>
-      <datePicker v-model:startDate="item.catalog_date" title="Catalog Date"></datePicker>
-      <datePicker v-model:startDate="item.specialist_date" title="Specialist Date"></datePicker>
+      <v-textarea v-model="item.dimension_notes" label="Dimension Notes" class="mr-1" filled readonly />
+      <v-textarea v-model="item.specialist_description" label="Specialist Description" class="mr-1" filled readonly />
     </v-row>
 
+    <v-row wrap no-gutters>
+      <v-text-field v-model="item.weight" label="Weight" class="mr-1" filled readonly />
+      <v-text-field v-model="item.length" label="Length" class="mr-1" filled readonly />
+      <v-text-field v-model="item.width" label="Width" class="mr-1" filled readonly />
+      <v-text-field v-model="item.diameter" label="Diameter" class="mr-1" filled readonly />
+    </v-row>
+    <v-row wrap no-gutters>
+      <v-text-field v-model="excavation_date" label="Excavation Date" class="mr-1" filled readonly />
+      <v-text-field v-model="cataloger" label="Cataloger" class="mr-1" filled readonly />
+      <v-text-field v-model="catalog_date" label="Catalog Date" class="mr-1" filled readonly />
+      <v-text-field v-model="specialist" label="Specialist" class="mr-1" filled readonly />
+      <v-text-field v-model="specialist_date" label="Specialist Date" class="mr-1" filled readonly />
+    </v-row>
+    <v-row wrap no-gutters>
+    </v-row>
   </v-container>
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { TFieldsByModule } from '@/js/types/moduleTypes'
 import { useItemStore } from '../../../scripts/stores/item'
-import DatePicker from './DatePicker.vue'
 import { dateStringFromDate } from '../../../scripts/utils/utils'
 
-onMounted(() => {
-  //item.value.catalog_date = new Date(item.value.catalog_date)//Object.assign(newFields.value, fields.value as TFieldsByModule<'Stone'>)
-  //console.log(`StoneNew.Mount fields: ${JSON.stringify(newFields, null, 2)}`)
-})
 
-let { fields } = storeToRefs(useItemStore())
+
+let { fields, tag, discreteColumns } = storeToRefs(useItemStore())
 
 const item = computed(() => {
   return <TFieldsByModule<'Stone'>>fields.value
@@ -47,9 +60,21 @@ const catalog_date = computed(() => {
   return dateStringFromDate(item.value.catalog_date)
 })
 
+const cataloger = computed(() => {
+  return discreteColumns.value['cataloger_id']
+})
+
+const specialist = computed(() => {
+  return 'Jennie Ebeling'
+})
 const specialist_date = computed(() => {
   return dateStringFromDate(item.value.specialist_date)
 })
+
+function openContextTab() {
+  console.log(`goToOpenContext() uri: ${item.value.uri}`)
+  window.open(<string>item.value.uri, '_blank', 'noreferrer')
+}
 
 
 </script>

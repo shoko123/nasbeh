@@ -1,20 +1,13 @@
 import { ref, computed } from 'vue'
-import { defineStore } from 'pinia'
+import { defineStore, storeToRefs } from 'pinia'
 import { TFieldsByModule, TFieldsUnion, FuncSlugToId } from '@/js/types/moduleTypes'
+import { useItemStore } from '../../../scripts/stores/item'
 
 export const useLocusStore = defineStore('locus', () => {
-  const newFields = ref<TFieldsByModule<'Locus'>>({
-    id: '',
-    category: '',
-    a: 0,
-    b: 0,
-    oc_label: '',
-    square: '',
-    uri: '',
-    context_uri: '',
-    published_date: '',
-    updated_date: '',
-  })
+  const newFields = ref<Partial<TFieldsByModule<'Locus'>>>({})
+
+  const { fields } = storeToRefs(useItemStore())
+
   const slugToId: FuncSlugToId = function (slug: string) {
     const arr = slug.split('.')
 
@@ -36,12 +29,20 @@ export const useLocusStore = defineStore('locus', () => {
     return { tag: id, slug: id }
   }
 
+  function prepareForNew(isCreate: boolean): void {
+    //console.log(`stone.beforStore() isCreate: ${isCreate}  fields: ${JSON.stringify(fields, null, 2)}`)
+    Object.assign(newFields.value, fields.value as TFieldsByModule<'Stone'>)
+
+    if (isCreate) {
+      //create id
+    }
+  }
   function beforeStore(isCreate: boolean): TFieldsUnion | false {
     //console.log(`stone.beforStore() isCreate: ${isCreate}  fields: ${JSON.stringify(fields, null, 2)}`)
     if (isCreate) {
-      return newFields.value
+      return newFields.value as TFieldsByModule<'Locus'>
     } else {
-      return newFields.value
+      return newFields.value as TFieldsByModule<'Locus'>
     }
   }
 
@@ -60,6 +61,7 @@ export const useLocusStore = defineStore('locus', () => {
 
   return {
     newFields,
+    prepareForNew,
     beforeStore,
     slugToId,
     tagAndSlugFromId,

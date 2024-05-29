@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Illuminate\Support\Carbon;
 
 abstract class DigModel extends Model implements DigModelInterface, HasMedia
 {
@@ -300,8 +301,13 @@ abstract class DigModel extends Model implements DigModelInterface, HasMedia
         }
 
         //copy the validated data from the validated array to the 'item' object.
+        //If JSON field is a "date", use Carbon to format to mysql Date field.
         foreach ($new_item as $key => $value) {
-            $item[$key] = $value;
+            if (str_contains($key, "_date") && strtotime($value) !== false) {
+                $item[$key] = Carbon::parse($value)->format('Y-m-d');
+            } else {
+                $item[$key] = $value;
+            }
         }
 
         if ($methodIsPost) {

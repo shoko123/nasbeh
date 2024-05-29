@@ -3,7 +3,7 @@ function assert(condition: unknown, msg?: string): asserts condition {
 }
 
 function dateStringFromDate(date: Date) {
-  return date ? date.toISOString().split('T')[0] : 'No date given'
+  return date ? date.toISOString().split('T')[0] : 'Not Given'
 }
 
 export { assert, dateStringFromDate }

@@ -60,7 +60,6 @@ const routes = [
     path: '/:module/create',
     component: () => import('@/components/content/CreateUpdatePage.vue'),
     name: 'create',
-    props: { isCreate: true },
   },
   {
     path: '/:module/:slug',
@@ -71,7 +70,6 @@ const routes = [
     path: '/:module/:slug/update',
     component: () => import('@/components/content/CreateUpdatePage.vue'),
     name: 'update',
-    props: { isCreate: false },
   },
   {
     path: '/:module/:slug/media',

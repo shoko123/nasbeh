@@ -123,7 +123,7 @@ export const useItemStore = defineStore('item', () => {
   //return the newly created/update item's slug (need it only for create())
   async function upload(
     isCreate: boolean,
-    newFields: TFieldsUnion,
+    newFields: Partial<TFieldsUnion>,
   ): Promise<{ success: true; slug: string } | { success: false; message: string }> {
     const { array } = useCollectionMainStore()
     console.log(

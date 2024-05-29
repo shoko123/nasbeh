@@ -36,7 +36,7 @@ export const useRoutesPrepareStore = defineStore('routesPrepare', () => {
   const { parseSlug, parseUrlQuery } = useRoutesParserStore()
   const { clearSelectedFilters } = useFilterStore()
   const { apiQueryPayload } = storeToRefs(useFilterStore())
-  const { setModuleInfo } = useModuleStore()
+  const { setModuleInfo, prepareForNew } = useModuleStore()
   const { setTrio, trioReset } = useTrioStore()
   const { setItemMedia } = useMediaStore()
 
@@ -140,6 +140,14 @@ export const useRoutesPrepareStore = defineStore('routesPrepare', () => {
 
         case 'item.prepareForMedia':
           prepareForMedia()
+          break
+
+        case 'item.prepareForUpdate':
+          prepareForNew(false)
+          break
+
+        case 'item.prepareForCreate':
+          prepareForNew(true)
           break
 
         default:

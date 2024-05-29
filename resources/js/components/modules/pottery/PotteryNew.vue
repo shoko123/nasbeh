@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, computed } from 'vue'
+import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import type { TFieldsByModule } from '@/js/types/moduleTypes'
 import { useVuelidate } from '@vuelidate/core'
@@ -21,16 +21,6 @@ import { useItemStore } from '../../../scripts/stores/item'
 import { usePotteryStore } from '../../../scripts/stores/modules/pottery'
 import { useTrioStore } from '../../../scripts/stores/trio/trio'
 
-const props = defineProps<{
-  isCreate: boolean
-}>()
-
-onMounted(() => {
-  if (!props.isCreate) {
-    Object.assign(newFields, fields.value)
-  }
-  console.log(`PotteryNew isCreate: ${props.isCreate}\n newFields: ${JSON.stringify(newFields, null, 2)}`)
-})
 
 const { fields } = storeToRefs(useItemStore())
 const { newFields } = storeToRefs(usePotteryStore())
@@ -53,7 +43,7 @@ const currentItemFields = computed(() => {
   return fields.value! as TFieldsByModule<'Pottery'>
 })
 
-const v = useVuelidate(rules, newFields)
+const v = useVuelidate(rules, newFields.value as TFieldsByModule<'Pottery'>)
 
 const nameErrors = computed(() => {
   return <string>(v.value.name.$error ? v.value.name.$errors[0].$message : undefined)

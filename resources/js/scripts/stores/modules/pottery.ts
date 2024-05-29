@@ -1,13 +1,11 @@
 import { ref, computed } from 'vue'
-import { defineStore } from 'pinia'
+import { defineStore, storeToRefs } from 'pinia'
 import { TFieldsByModule, TFieldsUnion, FuncSlugToId } from '@/js/types/moduleTypes'
+import { useItemStore } from '../../../scripts/stores/item'
 
 export const usePotteryStore = defineStore('pottery', () => {
-  const newFields = ref<TFieldsByModule<'Pottery'>>({
-    id: '',
-    name: '',
-    area: '',
-  })
+  const { fields } = storeToRefs(useItemStore())
+  const newFields = ref<Partial<TFieldsByModule<'Pottery'>>>({})
   const slugToId: FuncSlugToId = function (slug: string) {
     const arr = slug.split('.')
 
@@ -24,13 +22,20 @@ export const usePotteryStore = defineStore('pottery', () => {
     return { tag: id, slug: id }
   }
 
+  function prepareForNew(isCreate: boolean): void {
+    //console.log(`stone.beforStore() isCreate: ${isCreate}  fields: ${JSON.stringify(fields, null, 2)}`)
+    Object.assign(newFields.value, fields.value as TFieldsByModule<'Stone'>)
+
+    if (isCreate) {
+      //
+    }
+  }
   function beforeStore(isCreate: boolean): TFieldsUnion | false {
     //console.log(`stone.beforStore() isCreate: ${isCreate}  fields: ${JSON.stringify(fields, null, 2)}`)
     if (isCreate) {
-      return newFields.value
-    } else {
-      return newFields.value
+      //
     }
+    return newFields.value as TFieldsByModule<'Pottery'>
   }
 
   const headers = computed(() => {
@@ -48,6 +53,7 @@ export const usePotteryStore = defineStore('pottery', () => {
 
   return {
     newFields,
+    prepareForNew,
     beforeStore,
     tagAndSlugFromId,
     slugToId,

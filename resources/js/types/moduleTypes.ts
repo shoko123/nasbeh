@@ -6,7 +6,7 @@ import type { TPottery } from '@/js/types/modules/Pottery'
 
 type TModuleInfo = {
   url_name: string
-  fields: { id: string }
+  fields: object
   modify: { id: string }
   lookup: { id: string }
   tabular: { id: string }
@@ -41,6 +41,11 @@ type TFieldsByModule<ModuleName extends TModule> = TAllByName<ModuleName>['field
 type TApiFieldsByModule<ModuleName extends TModule> = SwapDatesWithStrings<
   TFieldsByModule<ModuleName>
 >
+
+type FieldsAsBooleans<T> = {
+  [k in keyof T]: boolean
+}
+
 type TModifyByModule<ModuleName extends TModule> = TAllByName<ModuleName>['modify']
 
 type TTabularByModule<ModuleName extends TModule> = TAllByName<ModuleName>['tabular']
@@ -79,4 +84,5 @@ export {
   TTabularByModule,
   TApiModuleInit,
   FuncSlugToId,
+  FieldsAsBooleans,
 }

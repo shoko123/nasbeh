@@ -11,7 +11,7 @@ class StoneStoreRequest extends DigModelStoreRequest
     public static $base_rules = [
         'item.id' => 'required|max:50',
         'item.specialist_description' => 'max:250',
-        'item.specialist_date' => 'required'
+        'item.specialist_date' => 'date|nullable'
     ];
 
     public static $create_rules = [

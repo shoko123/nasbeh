@@ -41,6 +41,11 @@ export const useModuleStore = defineStore('module', () => {
     return store.tagAndSlugFromId(id)
   }
 
+  function prepareForNew(isCreate: boolean): void {
+    const store = getStore(<TModule>to.value.module)
+    return store.prepareForNew(isCreate)
+  }
+
   function setModuleInfo(initData: {
     counts: { items: number; media: number }
     welcomeText: string
@@ -73,6 +78,7 @@ export const useModuleStore = defineStore('module', () => {
     firstSlug,
     backgroundImage,
     getCurrentModuleStore,
+    prepareForNew,
     tagAndSlugFromId,
     setModuleInfo,
   }

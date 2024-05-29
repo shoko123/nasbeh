@@ -5,7 +5,7 @@
         {{ title }}
       </v-card-title>
       <v-card-text>
-        <component :is="formNew" :is-create="props.isCreate">
+        <component :is="formNew" :is-create="isCreate">
           <template #newItem="{ v }">
             <v-btn variant="outlined" @click="submit(v)"> Submit </v-btn>
             <v-btn variant="outlined" class="ml-1" @click="cancel"> Cancel </v-btn>
@@ -29,18 +29,17 @@ import { useNotificationsStore } from '../../scripts/stores/notifications'
 import StoneNew from '../modules/stones/StoneNew.vue'
 import PotteryNew from '../modules/pottery/PotteryNew.vue'
 
-const props = defineProps<{
-  isCreate: boolean
-}>()
-
 let { showSpinner, showSnackbar } = useNotificationsStore()
 let { upload } = useItemStore()
 let { getCurrentModuleStore } = storeToRefs(useModuleStore())
 let { routerPush } = useRoutesMainStore()
 let { current } = storeToRefs(useRoutesMainStore())
 
+const isCreate = computed(() => {
+  return current.value.name === 'create'
+})
 const title = computed(() => {
-  return props.isCreate ? 'Create' : 'Update'
+  return isCreate.value ? 'Create' : 'Update'
 })
 
 const formNew = computed<Component>(() => {
@@ -57,7 +56,7 @@ const formNew = computed<Component>(() => {
 
 function beforeStore() {
   let store = getCurrentModuleStore.value
-  return store.beforeStore(props.isCreate)
+  return store.beforeStore(isCreate.value)
 }
 
 async function submit(v: Validation) {
@@ -82,21 +81,21 @@ async function submit(v: Validation) {
     return
   }
 
-  showSpinner(`${props.isCreate ? 'Creating' : 'Updating'} ${current.value.module} item...`)
-  const res = await upload(props.isCreate, fieldsToSend)
+  showSpinner(`${isCreate.value ? 'Creating' : 'Updating'} ${current.value.module} item...`)
+  const res = await upload(isCreate.value, fieldsToSend)
   showSpinner(false)
 
   if (!res.success) {
-    showSnackbar(`Failed to ${props.isCreate ? 'create' : 'update'} item. ${res.message}`, 'red')
+    showSnackbar(`Failed to ${isCreate.value ? 'create' : 'update'} item. ${res.message}`, 'red')
     return
   }
 
   showSnackbar(
-    `${current.value.module} item ${props.isCreate ? 'created' : 'updated'} successfully!`,
+    `${current.value.module} item ${isCreate.value ? 'created' : 'updated'} successfully!`,
   )
   console.log(`CreateUpdate. success! res: ${JSON.stringify(res, null, 2)}`)
 
-  if (props.isCreate) {
+  if (isCreate.value) {
     routerPush('show', res.slug)
   } else {
     routerPush('show', <string>current.value.slug)
@@ -104,7 +103,7 @@ async function submit(v: Validation) {
 }
 
 const cancel = () => {
-  console.log(`cancel`)
+  console.log(`CreateUpdateForm.cancel()`)
   routerPush('back1')
 }
 </script>
