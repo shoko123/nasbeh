@@ -3,17 +3,20 @@ import { defineStore, storeToRefs } from 'pinia'
 import { required, maxLength } from '@vuelidate/validators'
 import { TFieldsByModule, TFieldsUnion, FuncSlugToId } from '@/js/types/moduleTypes'
 import { useItemStore } from '../../../scripts/stores/item'
+import { useItemNewStore } from '../../../scripts/stores/itemNew'
+import { useRoutesMainStore } from '../../../scripts/stores/routes/routesMain'
 
 export const useStoneStore = defineStore('stone', () => {
   const { fields } = storeToRefs(useItemStore())
+  const { openIdSelectorModal } = storeToRefs(useItemNewStore())
+  const { current } = storeToRefs(useRoutesMainStore())
   const newFields = ref<Partial<TFieldsByModule<'Stone'>>>({})
 
   const rules = computed(() => {
-    return isInOpenContext.value
+    return inOC.value
       ? {
           id: {},
           specialist_description: { maxLength: maxLength(25) },
-          specialist_date: {},
         }
       : {
           id: {},
@@ -43,9 +46,15 @@ export const useStoneStore = defineStore('stone', () => {
           material_id: 0,
         }
   })
-  const isInOpenContext = computed(() => {
-    const uri = (<TFieldsByModule<'Stone'>>fields.value).uri
-    return uri !== ''
+
+  const isNew = computed(() => {
+    return ['update', 'create'].includes(current.value.name)
+  })
+
+  const inOC = computed(() => {
+    return isNew.value
+      ? newFields.value.uri !== ''
+      : (<TFieldsByModule<'Stone'>>fields.value).uri !== ''
   })
 
   const slugToId: FuncSlugToId = function (slug: string) {
@@ -69,32 +78,85 @@ export const useStoneStore = defineStore('stone', () => {
     return { tag: id, slug: id }
   }
 
-  function prepareForNew(isCreate: boolean): void {
+  const currentIds = ref<string[]>([])
+
+  function prepareForNew(isCreate: boolean, ids?: string[]): void {
     console.log(
       `prepNew(Stone) create(${isCreate}) fields: ${JSON.stringify(fields.value, null, 2)}`,
     )
-    Object.assign(newFields.value, fields.value as TFieldsByModule<'Stone'>)
-    if (newFields.value.specialist_date === null) {
-      newFields.value.specialist_date = new Date()
+    if (isCreate) {
+      currentIds.value = ids!
+      openIdSelectorModal.value = true
+      prepareDefaultNewFields()
+      console.log(`isCreate. current ids: ${currentIds.value}`)
+    } else {
+      Object.assign(newFields.value, fields.value as TFieldsByModule<'Stone'>)
     }
   }
 
+  const availableItemNumbers = computed(() => {
+    const itemNos = currentIds.value.map((x) => {
+      const sections = x.split('.')
+      return parseInt(sections[2])
+    })
+
+    const all = [...Array(200).keys()].map((i) => i + 1)
+
+    return all.filter((x) => {
+      return !itemNos.includes(x)
+    })
+
+    // console.log(`current ids: ${itemNos}`)
+    // console.log(`all ids: ${all}`)
+    // console.log(`diff: ${diff}`)
+  })
+
   function beforeStore(isCreate: boolean): Partial<TFieldsUnion> | false {
     //console.log(`stone.beforStore() isCreate: ${isCreate}  fields: ${JSON.stringify(fields, null, 2)}`)
-    //const sf = <TFieldsByModule<'Stone'>>fields
     if (isCreate) {
       //
+    } else {
+      //
     }
-    if (isInOpenContext.value) {
-      //do something here
+    if (inOC.value) {
       return {
         id: newFields.value.id,
         specialist_description: newFields.value.specialist_description,
-        specialist_date: newFields.value.specialist_date,
-      } // as TFieldsByModule<'Stone'>
+        specialist_date: new Date(),
+      }
     } else {
       return newFields.value
     }
+  }
+
+  function prepareDefaultNewFields() {
+    newFields.value.id = 'B2024.1.' + availableItemNumbers.value[0]
+    newFields.value.square = ''
+    newFields.value.context = ''
+    newFields.value.excavation_date = null
+    newFields.value.occupation_level = ''
+    newFields.value.excavation_object_id = ''
+    newFields.value.whole = false
+    newFields.value.cataloger_typology = ''
+    newFields.value.cataloger_description = ''
+    newFields.value.conservation_notes = ''
+    newFields.value.weight = ''
+    newFields.value.length = ''
+    newFields.value.width = ''
+    newFields.value.height = ''
+    newFields.value.diameter = ''
+    newFields.value.dimension_notes = ''
+    newFields.value.cultural_period = ''
+    newFields.value.old_museum_id = ''
+    newFields.value.cataloger_id = 1
+    newFields.value.catalog_date = null
+    newFields.value.specialist_description = ''
+    newFields.value.specialist_date = null
+    newFields.value.thumbnail = ''
+    newFields.value.uri = ''
+    newFields.value.base_type_id = 1
+    newFields.value.base_type_id = 1
+    newFields.value.material_id = 1
   }
 
   const headers = computed(() => {
@@ -111,11 +173,14 @@ export const useStoneStore = defineStore('stone', () => {
   return {
     newFields,
     rules,
-    isInOpenContext,
+    inOC,
+    isNew,
     prepareForNew,
+    availableItemNumbers,
     beforeStore,
     slugToId,
     tagAndSlugFromId,
     headers,
+    currentIds,
   }
 })

@@ -10,14 +10,13 @@ import { useCollectionMainStore } from './collections/collectionMain'
 import { useRoutesMainStore } from './routes/routesMain'
 import { useXhrStore } from './xhr'
 import { useModuleStore } from './module'
-import { useMediaStore } from './media'
+
 import { useTrioStore } from './trio/trio'
 
 export const useItemStore = defineStore('item', () => {
   const { current } = storeToRefs(useRoutesMainStore())
   const { collection, itemByIndex } = useCollectionsStore()
   const { tagAndSlugFromId } = useModuleStore()
-  const { setItemMedia } = useMediaStore()
   const { send } = useXhrStore()
   const { trio, fieldNameToGroupKey, groupLabelToKey } = storeToRefs(useTrioStore())
 
@@ -120,42 +119,7 @@ export const useItemStore = defineStore('item', () => {
     fields.value = Object.fromEntries(tmpMap.entries())
   }
 
-  //return the newly created/update item's slug (need it only for create())
-  async function upload(
-    isCreate: boolean,
-    newFields: Partial<TFieldsUnion>,
-  ): Promise<{ success: true; slug: string } | { success: false; message: string }> {
-    const { array } = useCollectionMainStore()
-    console.log(
-      `item.upload isCreate: ${isCreate}, module: ${current.value.module}, fields: ${JSON.stringify(newFields, null, 2)}`,
-    )
-
-    const res = await send<TApiItemShow<TApiFieldsUnion>>(
-      'model/store',
-      isCreate ? 'post' : 'put',
-      {
-        model: current.value.module,
-        item: newFields,
-        id: newFields.id,
-      },
-    )
-    if (!res.success) {
-      return res
-    }
-
-    if (isCreate) {
-      setItemMedia([])
-      saveitemFieldsPlus(res.data)
-      array.push(res.data.fields.id)
-      itemIndex.value = array.length
-      //console.log(`item pushed to main array. index: ${itemIndex.value}`)
-    } else {
-      saveItemFields(res.data.fields)
-      slug.value = res.data.slug
-    }
-
-    return { success: true, slug: <string>slug.value }
-  }
+  //return the newly created/update item's slug (need it only for create())\
 
   function itemClear() {
     itemIndex.value = -1
@@ -226,9 +190,9 @@ export const useItemStore = defineStore('item', () => {
     itemViewIndex,
     itemView,
     setItemViewIndex,
+    saveItemFields,
     saveitemFieldsPlus,
     saveDateColumns,
-    upload,
     itemRemove,
   }
 })

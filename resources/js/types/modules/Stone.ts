@@ -5,7 +5,7 @@ type TStone<T extends TModuleInfo> = {
     id: string
     square: string
     context: string
-    excavation_date: Date
+    excavation_date: Date | null
     occupation_level: string
     cataloger_material: string
     whole: boolean
@@ -22,9 +22,9 @@ type TStone<T extends TModuleInfo> = {
     excavation_object_id: string
     old_museum_id: string
     cataloger_id: number
-    catalog_date: Date
+    catalog_date: Date | null
     specialist_description: string
-    specialist_date: Date
+    specialist_date: Date | null
     thumbnail: string
     uri: string
     base_type_id: number

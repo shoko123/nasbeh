@@ -22,7 +22,7 @@ import { storeToRefs } from 'pinia'
 import { type Validation } from '@vuelidate/core'
 
 import { useRoutesMainStore } from '../../scripts/stores/routes/routesMain'
-import { useItemStore } from '../../scripts/stores/item'
+import { useItemNewStore } from '../../scripts/stores/itemNew'
 import { useModuleStore } from '../../scripts/stores/module'
 import { useNotificationsStore } from '../../scripts/stores/notifications'
 
@@ -30,14 +30,16 @@ import StoneNew from '../modules/stones/StoneNew.vue'
 import PotteryNew from '../modules/pottery/PotteryNew.vue'
 
 let { showSpinner, showSnackbar } = useNotificationsStore()
-let { upload } = useItemStore()
+let { upload } = useItemNewStore()
 let { getCurrentModuleStore } = storeToRefs(useModuleStore())
 let { routerPush } = useRoutesMainStore()
+let { to } = storeToRefs(useRoutesMainStore())
 let { current } = storeToRefs(useRoutesMainStore())
 
 const isCreate = computed(() => {
-  return current.value.name === 'create'
+  return to.value.name === 'create'
 })
+
 const title = computed(() => {
   return isCreate.value ? 'Create' : 'Update'
 })
@@ -95,11 +97,7 @@ async function submit(v: Validation) {
   )
   console.log(`CreateUpdate. success! res: ${JSON.stringify(res, null, 2)}`)
 
-  if (isCreate.value) {
-    routerPush('show', res.slug)
-  } else {
-    routerPush('show', <string>current.value.slug)
-  }
+  routerPush('show', res.slug)
 }
 
 const cancel = () => {

@@ -53,11 +53,11 @@ const item = computed(() => {
 })
 
 const excavation_date = computed(() => {
-  return dateStringFromDate(item.value.excavation_date)
+  return dateStringFromDate(<Date>item.value.excavation_date)
 })
 
 const catalog_date = computed(() => {
-  return dateStringFromDate(item.value.catalog_date)
+  return dateStringFromDate(<Date>item.value.catalog_date)
 })
 
 const cataloger = computed(() => {
@@ -67,8 +67,9 @@ const cataloger = computed(() => {
 const specialist = computed(() => {
   return 'Jennie Ebeling'
 })
+
 const specialist_date = computed(() => {
-  return dateStringFromDate(item.value.specialist_date)
+  return dateStringFromDate(<Date>item.value.specialist_date)
 })
 
 function openContextTab() {

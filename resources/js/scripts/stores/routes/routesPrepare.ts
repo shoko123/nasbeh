@@ -22,6 +22,7 @@ import { useMediaStore } from '../media'
 import { useModuleStore } from '../module'
 import { useNotificationsStore } from '../notifications'
 import { useItemStore } from '../item'
+import { useItemNewStore } from '../itemNew'
 import { useRoutesMainStore } from './routesMain'
 import { useRoutesParserStore } from './routesParser'
 import { TApiArray } from '@/js/types/collectionTypes'
@@ -29,14 +30,14 @@ import { TApiArray } from '@/js/types/collectionTypes'
 export const useRoutesPrepareStore = defineStore('routesPrepare', () => {
   const { send } = useXhrStore()
   const n = useNotificationsStore()
-
+  const { prepareForNew } = useItemNewStore()
   const c = useCollectionsStore()
   const i = useItemStore()
   const r = useRoutesMainStore()
   const { parseSlug, parseUrlQuery } = useRoutesParserStore()
   const { clearSelectedFilters } = useFilterStore()
   const { apiQueryPayload } = storeToRefs(useFilterStore())
-  const { setModuleInfo, prepareForNew } = useModuleStore()
+  const { setModuleInfo } = useModuleStore()
   const { setTrio, trioReset } = useTrioStore()
   const { setItemMedia } = useMediaStore()
 
@@ -147,7 +148,17 @@ export const useRoutesPrepareStore = defineStore('routesPrepare', () => {
           break
 
         case 'item.prepareForCreate':
-          prepareForNew(true)
+          {
+            const res = await send<TApiArray[]>('model/index', 'post', {
+              model: module,
+              query: {},
+            })
+            if (res.success) {
+              prepareForNew(true, res.data)
+            } else {
+              return { success: false, message: `Error: failed to load current ids` }
+            }
+          }
           break
 
         default:

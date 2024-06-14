@@ -310,10 +310,6 @@ abstract class DigModel extends Model implements DigModelInterface, HasMedia
             }
         }
 
-        if ($methodIsPost) {
-            unset($item->id);
-        }
-
         try {
             $item->save();
         } catch (Exception $error) {
