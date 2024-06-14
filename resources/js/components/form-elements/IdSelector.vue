@@ -35,11 +35,13 @@ const { routerPush } = useRoutesMainStore()
 const idInfo = computed(() => {
     return { id: id.value, tag: "Fake tag" }
 })
+
 function cancel() {
     openIdSelectorModal.value = false
     console.log(`IdSelector.cancel()`)
     routerPush('back1')
 }
+
 function changeLabel() {
     console.log(`IdSelector.change label()`)
     openIdSelectorModal.value = true

@@ -30,6 +30,11 @@ return new class extends Migration
 
         Schema::create('stones', function (Blueprint $table) {
             $table->string('id', 15)->primary();
+
+            $table->unsignedTinyInteger('id_year')->default(1);
+            $table->unsignedTinyInteger('id_access_no')->default(1);
+            $table->unsignedMediumInteger('id_object_no')->default(1);
+            ////
             $table->string('square', 50)->nullable();
             $table->string('context', 50)->nullable();
             $table->date('excavation_date')->nullable();
