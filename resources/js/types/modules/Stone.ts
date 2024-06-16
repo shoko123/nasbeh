@@ -3,6 +3,9 @@ type TStone<T extends TModuleInfo> = {
   url_name: 'stones'
   fields: {
     id: string
+    id_year: number
+    id_access_no: number
+    id_object_no: number
     square: string
     context: string
     excavation_date: Date | null
@@ -26,7 +29,7 @@ type TStone<T extends TModuleInfo> = {
     specialist_description: string
     specialist_date: Date | null
     thumbnail: string
-    uri: string
+    uri: string | null
     base_type_id: number
     material_id: number
   }

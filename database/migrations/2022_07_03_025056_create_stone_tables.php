@@ -62,6 +62,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('base_type_id')->default(1);
             $table->unsignedTinyInteger('material_id')->default(1);
 
+            $table->unique(['id_year', 'id_access_no', 'id_object_no']);
 
             $table->foreign('base_type_id')
                 ->references('id')->on('stone_base_types')

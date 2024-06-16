@@ -29,7 +29,8 @@ const { openIdSelectorModal } = storeToRefs(useItemNewStore())
 
 function selected(item_no: number) {
   console.log(`Item selected: ${item_no}`)
-  newFields.value.id = '2024.1.' + item_no
+  newFields.value.id = 'B2024.1.' + item_no
+  newFields.value.id_object_no = item_no
   openIdSelectorModal.value = false
 }
 

@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore, storeToRefs } from 'pinia'
-import { required, maxLength } from '@vuelidate/validators'
+import { maxLength } from '@vuelidate/validators'
 import { TFieldsByModule, TFieldsUnion, FuncSlugToId } from '@/js/types/moduleTypes'
 import { useItemStore } from '../../../scripts/stores/item'
 import { useItemNewStore } from '../../../scripts/stores/itemNew'
@@ -20,30 +20,26 @@ export const useStoneStore = defineStore('stone', () => {
         }
       : {
           id: {},
-          square: {},
-          context: {},
+          square: { maxLength: maxLength(50) },
+          context: { maxLength: maxLength(50) },
           excavation_date: {},
-          occupation_level: { required, maxLength: maxLength(50) },
-          excavation_object_id: {},
+          occupation_level: { maxLength: maxLength(10) },
+          cataloger_material: { maxLength: maxLength(50) },
           whole: false,
-          cataloger_typology: {},
-          cataloger_description: {},
-          conservation_notes: {},
-          weight: {},
-          length: {},
-          width: {},
-          height: {},
-          diameter: {},
-          dimension_notes: {},
-          cultural_period: {},
-          old_museum_id: {},
-          cataloger_id: 0,
+          cataloger_typology: { maxLength: maxLength(50) },
+          cataloger_description: { maxLength: maxLength(350) },
+          conservation_notes: { maxLength: maxLength(250) },
+          weight: { maxLength: maxLength(50) },
+          length: { maxLength: maxLength(50) },
+          width: { maxLength: maxLength(50) },
+          height: { maxLength: maxLength(50) },
+          diameter: { maxLength: maxLength(50) },
+          dimension_notes: { maxLength: maxLength(250) },
+          cultural_period: { maxLength: maxLength(50) },
+          excavation_object_id: { maxLength: maxLength(50) },
+          old_museum_id: { maxLength: maxLength(50) },
           catalog_date: {},
-          specialist_description: { maxLength: maxLength(7) },
-          specialist_date: {},
-          thumbnail: {},
-          base_type_id: 0,
-          material_id: 0,
+          specialist_description: { maxLength: maxLength(250) },
         }
   })
 
@@ -52,24 +48,22 @@ export const useStoneStore = defineStore('stone', () => {
   })
 
   const inOC = computed(() => {
-    return isNew.value
-      ? newFields.value.uri !== ''
-      : (<TFieldsByModule<'Stone'>>fields.value).uri !== ''
+    return isNew.value ? typeof newFields.value.uri === 'string' : undefined
   })
 
   const slugToId: FuncSlugToId = function (slug: string) {
-    const arr = slug.split('.')
+    const sections = slug.split('.')
 
-    if (arr.length === 1) {
+    if (sections.length !== 3) {
       return {
         success: false,
-        message: 'No . [dot] detected in slug',
+        message: 'Unsupported slug format detected',
       }
-    } else {
-      return {
-        success: true,
-        id: slug,
-      }
+    }
+
+    return {
+      success: true,
+      id: slug,
     }
   }
 
@@ -95,10 +89,15 @@ export const useStoneStore = defineStore('stone', () => {
   }
 
   const availableItemNumbers = computed(() => {
-    const itemNos = currentIds.value.map((x) => {
-      const sections = x.split('.')
-      return parseInt(sections[2])
-    })
+    const itemNos = currentIds.value
+      .filter((x) => {
+        const sections = x.split('.')
+        return sections[0] === 'B2024'
+      })
+      .map((x) => {
+        const sections = x.split('.')
+        return parseInt(sections[2])
+      })
 
     const all = [...Array(200).keys()].map((i) => i + 1)
 
@@ -121,16 +120,27 @@ export const useStoneStore = defineStore('stone', () => {
     if (inOC.value) {
       return {
         id: newFields.value.id,
+        id_year: newFields.value.id_year,
+        id_access_no: newFields.value.id_access_no,
+        id_object_no: newFields.value.id_object_no,
         specialist_description: newFields.value.specialist_description,
         specialist_date: new Date(),
       }
     } else {
-      return newFields.value
+      const fieldsToSend: Partial<TFieldsByModule<'Stone'>> = {}
+      Object.assign(fieldsToSend, newFields.value)
+      fieldsToSend.specialist_date = new Date()
+      fieldsToSend.catalog_date = new Date()
+      fieldsToSend.cataloger_id = 10
+      return fieldsToSend
     }
   }
 
   function prepareDefaultNewFields() {
     newFields.value.id = 'B2024.1.' + availableItemNumbers.value[0]
+    newFields.value.id_year = 24
+    newFields.value.id_access_no = 1
+    newFields.value.id_object_no = availableItemNumbers.value[0]
     newFields.value.square = ''
     newFields.value.context = ''
     newFields.value.excavation_date = null
@@ -153,7 +163,7 @@ export const useStoneStore = defineStore('stone', () => {
     newFields.value.specialist_description = ''
     newFields.value.specialist_date = null
     newFields.value.thumbnail = ''
-    newFields.value.uri = ''
+    newFields.value.uri = null
     newFields.value.base_type_id = 1
     newFields.value.base_type_id = 1
     newFields.value.material_id = 1
