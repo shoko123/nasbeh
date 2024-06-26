@@ -69,7 +69,7 @@ class Stone extends DigModel
 
     public function builderIndexDefaultOrder(): void
     {
-        //$this->builder->orderBy('id', 'asc');
+        $this->builder->orderBy('id_year', 'asc')->orderBy('id_object_no', 'asc');
     }
 
     public function builderPageTabularLoad(): void

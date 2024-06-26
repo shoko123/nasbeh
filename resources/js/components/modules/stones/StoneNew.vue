@@ -33,29 +33,23 @@
       <v-text-field v-model="newFields.width" label="Width" class="mr-1" filled :disabled="inOC" />
       <v-text-field v-model="newFields.diameter" label="Diameter" class="mr-1" filled :disabled="inOC" />
     </v-row>
+
     <v-row wrap no-gutters>
       <v-text-field v-model="newFields.cultural_period" label="Cataloger Assumed Period" class="mr-1" filled
         :disabled="inOC" />
       <v-date-input v-model="newFields.excavation_date" label="Excavation Date" clearable :disabled="inOC"
         max-width="368" @click:clear="clearDate('Excavation')"></v-date-input>
-      <v-text-field v-model="cataloger" label="Cataloger" class="mr-1" filled :disabled="inOC" />
-      <v-date-input v-model="newFields.catalog_date" label="Catalog Date" clearable :disabled="inOC" max-width="368"
-        @click:clear="clearDate('Catalog')"></v-date-input>
+      <template v-if="inOC">
+        <v-text-field v-model="cataloger" label="Cataloger" class="mx-1" filled :disabled="inOC" />
+        <v-date-input v-model="newFields.catalog_date" label="Catalog Date" clearable :disabled="inOC" max-width="368"
+          @click:clear="clearDate('Catalog')"></v-date-input>
+      </template>
     </v-row>
-
-    <!-- <v-row wrap no-gutters>
-      <v-col :cols="2">
-        <v-date-input v-model="newFields.specialist_date" label="Specialist Date"
-          :error-messages="specialist_dateErrors" clearable :disabled="!inOC" max-width="368"
-          @click:clear="clearDate('Specialist')"></v-date-input>
-      </v-col>
-    </v-row> -->
 
     <v-row wrap no-gutters>
       <v-textarea v-model="newFields.specialist_description" label="Specialist Description"
         :error-messages="specialist_descriptionErrors" class="mr-1" filled />
     </v-row>
-
     <slot :id="newFields.id" name="newItem" :v="v" :new-fields="newFields" />
   </v-container>
 </template>

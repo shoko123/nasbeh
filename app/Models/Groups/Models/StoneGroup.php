@@ -12,6 +12,16 @@ class StoneGroup extends ModelGroup implements ModelGroupInterface
 {
     private static $model_groups = [
 
+        'Year' => [
+            'group_type_code' => 'CR',
+            'table_name' => 'stones',
+            'column_name' => 'id_year',
+        ],
+        'Object Number' => [
+            'group_type_code' => 'CR',
+            'table_name' => 'stones',
+            'column_name' => 'id_object_no',
+        ],
         'Material' => [
             'group_type_code' => 'CL',
             'dependency' => null,
@@ -109,6 +119,8 @@ class StoneGroup extends ModelGroup implements ModelGroupInterface
             'params' => [
                 ['name' => 'Excavation Date', 'column_name' => 'excavation_date'],
                 ['name' => 'Catalog Date', 'column_name' => 'catalog_date'],
+                ['name' => 'Year', 'column_name' => 'id_year'],
+                ['name' => 'Object Number', 'column_name' => 'id_object_no'],
             ],
         ],
     ];
@@ -131,6 +143,7 @@ class StoneGroup extends ModelGroup implements ModelGroupInterface
                 'Search-ID',
             ],
             'Registration' => [
+                'Year',
                 'Media',
                 'Cataloger',
                 'Whole'

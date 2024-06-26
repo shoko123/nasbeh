@@ -4,12 +4,10 @@ import { maxLength } from '@vuelidate/validators'
 import { TFieldsByModule, TFieldsUnion, FuncSlugToId } from '@/js/types/moduleTypes'
 import { useItemStore } from '../../../scripts/stores/item'
 import { useItemNewStore } from '../../../scripts/stores/itemNew'
-import { useRoutesMainStore } from '../../../scripts/stores/routes/routesMain'
 
 export const useStoneStore = defineStore('stone', () => {
   const { fields } = storeToRefs(useItemStore())
-  const { openIdSelectorModal } = storeToRefs(useItemNewStore())
-  const { current } = storeToRefs(useRoutesMainStore())
+  const { openIdSelectorModal, isCreate, isUpdate } = storeToRefs(useItemNewStore())
   const newFields = ref<Partial<TFieldsByModule<'Stone'>>>({})
 
   const rules = computed(() => {
@@ -43,12 +41,11 @@ export const useStoneStore = defineStore('stone', () => {
         }
   })
 
-  const isNew = computed(() => {
-    return ['update', 'create'].includes(current.value.name)
-  })
-
   const inOC = computed(() => {
-    return isNew.value ? typeof newFields.value.uri === 'string' : undefined
+    if (!isCreate.value && !isUpdate.value) {
+      return undefined
+    }
+    return typeof newFields.value.uri === 'string'
   })
 
   const slugToId: FuncSlugToId = function (slug: string) {
@@ -112,11 +109,6 @@ export const useStoneStore = defineStore('stone', () => {
 
   function beforeStore(isCreate: boolean): Partial<TFieldsUnion> | false {
     //console.log(`stone.beforStore() isCreate: ${isCreate}  fields: ${JSON.stringify(fields, null, 2)}`)
-    if (isCreate) {
-      //
-    } else {
-      //
-    }
     if (inOC.value) {
       return {
         id: newFields.value.id,
@@ -131,7 +123,9 @@ export const useStoneStore = defineStore('stone', () => {
       Object.assign(fieldsToSend, newFields.value)
       fieldsToSend.specialist_date = new Date()
       fieldsToSend.catalog_date = new Date()
-      fieldsToSend.cataloger_id = 10
+      if (isCreate) {
+        fieldsToSend.cataloger_id = 10
+      }
       return fieldsToSend
     }
   }
@@ -184,7 +178,6 @@ export const useStoneStore = defineStore('stone', () => {
     newFields,
     rules,
     inOC,
-    isNew,
     prepareForNew,
     availableItemNumbers,
     beforeStore,
